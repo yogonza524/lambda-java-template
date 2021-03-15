@@ -1,0 +1,73 @@
+buildscript {
+	ext {
+		goolgeFormatVer			= '0.9'
+		pitestVer				= '1.4.6'
+		pitestPluginVer			= '0.8'
+		pitestJUnit5Ver			= '0.9'
+		pmdVer					= '6.21.0'
+		sonarlintVer			= '1.0.162'
+		spotBugsVer				= '4.6.2'
+		awsLambdaJavaCoreVer	= '1.2.1'
+		awsLambdaJavaEventVer	= '2.2.9'
+		awsLambdaJavaLogVer		= '1.2.0'
+		lombokVer				= '1.16.18'
+	}
+	configurations.maybeCreate('pitest')
+
+	dependencies {
+		classpath('com.google.guava:guava:28.1-jre')
+		classpath("info.solidsoft.gradle.pitest:gradle-pitest-plugin:${pitestVer}")
+		pitest("org.pitest:pitest-junit5-plugin:${pitestPluginVer}")
+	}
+}
+
+plugins {
+	id 'java'
+	id 'name.remal.sonarlint' version "${sonarlintVer}"
+	id 'com.github.spotbugs' version "${spotBugsVer}"
+	id 'com.github.sherter.google-java-format' version "${goolgeFormatVer}"
+	id 'info.solidsoft.pitest' version "${pitestVer}"
+	id 'jacoco'
+	id 'pmd'
+}
+
+apply from: 'gradle/dependencies.gradle'
+apply from: 'gradle/version.gradle'
+apply from: 'gradle/quality.gradle'
+
+group					= 'com.keydev'
+version					= "${majorVer}.${minorVer}.${patchVer}"
+sourceCompatibility		= '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+allprojects {
+	gradle.projectsEvaluated {
+		tasks.withType(JavaCompile) {
+			options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+		}
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+task buildDocker(type: Copy) {
+	from compileJava
+	from processResources
+	into('lib') {
+		from configurations.runtimeClasspath
+	}
+	into 'build/docker'
+}
+
+build.dependsOn buildDocker

@@ -1,0 +1,13 @@
+
+// Feel free to add your dependency
+dependencies {
+    implementation "com.amazonaws:aws-lambda-java-core:${awsLambdaJavaCoreVer}"
+    implementation "com.amazonaws:aws-lambda-java-events:${awsLambdaJavaEventVer}"
+    runtimeOnly "com.amazonaws:aws-lambda-java-log4j2:${awsLambdaJavaLogVer}"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+
+    compileOnly "org.projectlombok:lombok:${lombokVer}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVer}"
+}

@@ -1,0 +1,22 @@
+spotbugs {
+    ignoreFailures = true
+    spotbugsTest.enabled = false
+}
+
+pmd {
+    consoleOutput = true
+    toolVersion = "${pmdVer}"
+    ignoreFailures = true
+    pmdTest.enabled = false
+}
+
+sonarlint {
+    ignoreFailures = true
+}
+
+tasks.withType(Pmd) {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
